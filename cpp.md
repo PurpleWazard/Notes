@@ -547,3 +547,298 @@ int main(){
     return 0;
 }
 ```
+
+## internal linkage
+
+Global variables with internal linkage are sometimes called internal variables.
+
+To make a non-constant global variable internal, we use the static keyword.
+
+```cpp
+// Internal global variables definitions:
+static int g_x;          // defines non-initialized internal global variable (zero initialized by default)
+static int g_x{ 1 };     // defines initialized internal global variable
+
+const int g_y { 2 };     // defines initialized internal global const variable
+constexpr int g_y { 3 }; // defines initialized internal global constexpr variable
+
+// Internal function definitions:
+static int foo() {};     // defines internal function
+```
+its best to use an unnamed namedspace for statics 
+
+## external 
+
+add external keyword to amke global virailbes external
+
+```cpp
+// External global variable definitions:
+int g_x;                       // defines non-initialized external global variable (zero initialized by default)
+extern const int g_x{ 1 };     // defines initialized const external global variable
+extern constexpr int g_x{ 2 }; // defines initialized constexpr external global variable
+
+// Forward declarations
+extern int g_y;                // forward declaration for non-constant global variable
+extern const int g_y;          // forward declaration for const global variable
+extern constexpr int g_y;      // not allowed: constexpr variables can't be forward declared
+```
+
+## non const global varibles are evil
+
+is best not to use non const global varibles because they can be changed easly which can effect your program.
+
+## global constant varibles across multiful files
+
+poir to C++17 you would define all the globals in a headerfile example
+
+```cpp
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+// define your own namespace to hold constants
+namespace constants
+{
+    // constants have internal linkage by default
+    constexpr double pi { 3.14159 };
+    constexpr double avogadro { 6.0221413e23 };
+    constexpr double myGravity { 9.2 }; // m/s^2 -- gravity is light on this planet
+    // ... other related constants
+}
+#endif
+```
+
+and include this headerfile in every file that needed these constants but there is an issue. you would have to recompile every file that included this file if you were to change it 
+
+after c++17 when inline was added example
+
+```cpp
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+// define your own namespace to hold constants
+namespace constants
+{
+    inline constexpr double pi { 3.14159 }; // note: now inline constexpr
+    inline constexpr double avogadro { 6.0221413e23 };
+    inline constexpr double myGravity { 9.2 }; // m/s^2 -- gravity is light on this planet
+    // ... other related constants
+}
+#endif
+```
+```cpp 
+#include "constants.h"
+
+#include <iostream>
+
+int main()
+{
+    std::cout << "Enter a radius: ";
+    double radius{};
+    std::cin >> radius;
+
+    std::cout << "The circumference is: " << 2 * radius * constants::pi << '\n';
+
+    return 0;
+}
+```
+ this still leves us with haveing to recompile everything that includes this header tho.
+
+## static local varibles
+
+the keyword static is used differntly accross cpp
+
+for varibles when non-static they have automatic duration ( start at def and end at block end)
+
+static varibles are created at program start and end at its end
+
+example
+```cpp
+#include <iostream>
+
+void incrementAndPrint()
+{
+    int value{ 1 }; // automatic duration by default
+    ++value;
+    std::cout << value << '\n';
+} // value is destroyed here
+
+int main()
+{
+    incrementAndPrint();
+    incrementAndPrint();
+    incrementAndPrint();
+
+    return 0;
+}```
+```cpp
+#include <iostream>
+
+void incrementAndPrint()
+{
+    static int s_value{ 1 }; // static duration via static keyword.  This initializer is only executed once.
+    ++s_value;
+    std::cout << s_value << '\n';
+} // s_value is not destroyed here, but becomes inaccessible because it goes out of scope
+
+int main()
+{
+    incrementAndPrint();
+    incrementAndPrint();
+    incrementAndPrint();
+
+    return 0;
+}```
+
+avoid static local varibles in a fucntion unless the value need to be reset everytime
+
+
+to refresh a static global varible give it interal linkage which means it cant be used in other files.
+
+## unnamed inline namespaces 
+
+you can call methods in a unnamed space without a prefix
+
+anything in an un namedspace basicly gives it interal namespace 
+
+you can use inline name spaces to version functions 
+
+the inline name space acts a the default namespace 
+
+```cpp
+#include <iostream>
+
+namespace V1 // declare a normal namespace named V1
+{
+    void doSomething()
+    {
+        std::cout << "V1\n";
+    }
+}
+
+inline namespace V2 // declare an inline namespace named V2
+{
+    void doSomething()
+    {
+        std::cout << "V2\n";
+    }
+}
+
+int main()
+{
+    V1::doSomething(); // calls the V1 version of doSomething()
+    V2::doSomething(); // calls the V2 version of doSomething()
+
+    doSomething(); // calls the inline version of doSomething() (which is V2)
+
+    return 0;
+}```
+
+V1
+V2
+V2
+## 8.5 constexpr if statements
+
+in a constextr if statment the condition conditionals must be know at compile time which means they too much be constexpr
+
+## 8.5 switch statemetns
+
+```cpp 
+#include <iostream>
+
+void printDigitName(int x)
+{
+    switch (x) // x evaluates to 3
+    {
+        case 1:
+            std::cout << "One";
+            break;
+        case 2:
+            std::cout << "Two";
+            break;
+        case 3:
+            std::cout << "Three"; // execution starts here
+            break; // jump to the end of the switch block
+        default:
+            std::cout << "Unknown";
+            break;
+    }
+
+    // execution continues here
+    std::cout << " Ah-Ah-Ah!";
+}
+
+int main()
+{
+    printDigitName(3);
+    std::cout << '\n';
+
+    return 0;
+}
+```
+
+
+here is a switch statements its best to use these when youre using lots of elseif statmests
+
+in switch statements if you dont add break; or return; it will **fall through** to other cases
+
+sometimes fall throught is wanted and with c++17 compilers give [[fallthrough]] attribute which can be add to a null statement ; eg [[fallthrough]];   before the new case which to fall throught 
+
+example of wanted fall throught
+```cpp
+bool isVowel(char c)
+{
+    switch (c)
+    {
+        case 'a': // if c is 'a'
+        case 'e': // or if c is 'e'
+        case 'i': // or if c is 'i'
+        case 'o': // or if c is 'o'
+        case 'u': // or if c is 'u'
+        case 'A': // or if c is 'A'
+        case 'E': // or if c is 'E'
+        case 'I': // or if c is 'I'
+        case 'O': // or if c is 'O'
+        case 'U': // or if c is 'U'
+            return true;
+        default:
+            return false;
+    }
+}
+```
+
+## 8.7 goto statements
+
+the goto statement is an unconditonal statement which means unlike if or switch it will always preform its action.
+
+with goto you can jump to functions or a labeled statement 
+exapmple:
+```cpp
+int main()
+{
+    goto skip;   // error: this jump is illegal because...
+    int x { 5 }; // this initialized variable is still in scope at statement label 'skip'
+skip:
+    x += 3;      // what would this even evaluate to if x wasn't initialized?
+    return 0;
+}
+```
+```cpp
+#include <iostream>
+#include <cmath> // for sqrt() function
+
+int main()
+{
+    double x{};
+tryAgain: // this is a statement label
+    std::cout << "Enter a non-negative number: ";
+    std::cin >> x;
+
+    if (x < 0.0)
+        goto tryAgain; // this is the goto statement
+
+    std::cout << "The square root of " << x << " is " << std::sqrt(x) << '\n';
+    return 0;
+}
+```
+
+loops for while do while contuniue halts
