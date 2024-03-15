@@ -842,3 +842,32 @@ tryAgain: // this is a statement label
 ```
 
 loops for while do while contuniue halts
+
+
+
+
+
+## missed lessions 8.x - 10.2
+
+# 10.1
+
+implicit type conversion is when the compiled has to convert one type to another type like
+
+```cpp
+int x = 3.5;
+// convert double 3.5 to an int
+int x{3.5};
+// this wont work because brace-init disallows convertions that result in data loss
+```
+
+
+## 10.2 
+
+some data types like floats can be promoted to doubles
+
+char bool and other data type smaller than int can be numeric promoted to type int implicitly
+
+
+
+
+## 10.3
