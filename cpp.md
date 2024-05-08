@@ -1,5 +1,7 @@
-# c++ notes
+# Cpp Notes
 im following this [**free** corse](https://www.learncpp.com)
+
+also stuff is misspelled cuz im lazy
 # chapter 0 (history)
 # chapter 1 (basicly basic) 
 > A computer program is a sequence of instructions that tell the computer what to do. A **statement** is a type of instruction that causes the program to perform some action.  
@@ -13,7 +15,7 @@ using a LSP (lanugae server protocol) will help you solve errors while you are c
 ### comments 
 comments have nothing to do with the code its just text in the coding file its self. why you compile a file with comments they are ignored complealy.  
 ```cpp
-//i am a regular comment 
+//i am a regular comment foot
 /*im a j    uu
 multi
 line 
@@ -843,8 +845,33 @@ tryAgain: // this is a statement label
 
 loops for while do while contuniue halts
 
+## loops
+
+while (condition)
+{
+
+}
+
+do
+{
+
+}
+while ( condition )
 
 
+for (init; condition; interator){
+
+}
+
+return
+
+contuine - exit current loop iteration
+
+break
+
+halts
+
+std::exit()
 
 
 ## missed lessions 8.x - 10.2
@@ -871,3 +898,257 @@ char bool and other data type smaller than int can be numeric promoted to type i
 
 
 ## 10.3
+
+turning ints to doubles and floats is ok but to int is will result in data remove
+
+also signed to unsigned is also promoblmatic
+
+brace init disallow narring
+
+int x {3.5};
+
+some times you need to convert types and to not get a waring use static_cast<type>(varible);
+
+## 10.6
+
+c sytle cast  (double)x / y
+
+cpp static_cast<type>(value);
+
+## 10.7 alias/typedef
+
+using speed = int;
+speed mason = 5;
+
+speed and mason are the same type they are basicly the same just differnt names.
+
+typedef is from c and is complex
+
+typedef Distance double; // incorrect (typedef name first)
+typedef double Distance; // correct (aliased type name first)
+
+and looks weird
+
+typedef int (*FcnType)(double, char); // FcnType hard to find
+using FcnType = int(*)(double, char); // FcnType easier to find
+
+prefer aliases over typedef
+
+type deduction the auto keyword can auto detect the varilbe type if its init is provided
+
+auto add(int x, int y) -> int;
+
+## 11.1 function overloading 
+
+int add(int x, int y){
+    return x + y;
+}
+
+this function returns an int but what if we wanted to add 2 doubles
+
+then:
+
+int add(int x, int y){
+    return x + y;
+}
+
+double add(double x, bouble y){
+    return x + y;
+}
+
+these functions have the same name but differnt pramaters so the compiler will be able to tell a difference
+
+add(5,6);
+add(3.5,8.2);
+
+the compilers tries to find a matching function first then it will move to numeric promotion:
+
+void print(int){}
+
+print('a');
+
+a will be converted to an int
+
+step 3 is numeric conversion:
+
+void print(double){}
+
+print('a')
+
+a will be promoted to int then to a double
+
+step 4 user defined conversion are used which are apart of classes.
+
+step 5 will use a ellipsis?
+
+step 6 compiler gives up and dies lol.
+
+if the compiler happens to find more than one option in one step it will yell at you
+ambiguous function call then die lol.
+
+1.Often, the best way is simply to define a new overloaded function that takes parameters of exactly the type you are trying to call the function with. Then C++ will be able to find an exact match for the function call.
+
+2.Alternatively, explicitly cast the ambiguous argument(s) to match the type of the function you want to call. For example, to have print(0) match print(unsigned int) in the above example, you would do this:
+
+int x{ 0 };
+print(static_cast<unsigned int>(x)); // will call print(unsigned int)
+
+## 11.4 deleting functions
+
+## come back to
+void printInt(int x)
+{
+    std::cout << x << '\n';
+}
+printInt(97);
+void printInt(int) = delete;
+printInt(97); --error
+
+## 11.5 default arguments
+
+void print(int x, int y=4) // 4 is the default argument
+{}
+
+void foo(int x = 5);   // ok
+void goo(int x ( 5 )); // compile error
+void boo(int x { 5 }); // compile error
+
+void print(int x=10, int y); // not allowed
+
+void print(int x, int y=4); // forward declaration
+
+void print(int x, int y=4) // error: redefinition of default argument
+{
+    std::cout << "x: " << x << '\n';
+    std::cout << "y: " << y << '\n';
+}
+
+## 11.6 11.X Templates
+
+too complex to make notes of here for now
+
+```cpp
+#include <iostream>
+
+template <typename X>
+
+X dou(X H) { //A
+    return H * 2;
+}
+
+int dou(int h){ //B
+    return h * 2;
+}
+
+int main()
+{
+  std::cout << dou(7) << "\n"; //calls B
+  std::cout << dou<>(7) << "\n"; //calls A as type int 
+  std::cout << dou<double>(46.545487) << "\n"; // calles A as type double
+  return 0;
+}
+```
+
+forward declerations can be problematic for templetes its best to put the in header files and incude them.
+
+non-type telplate
+```cpp
+#include <iostream>
+
+template <int N> // declare a non-type template parameter of type int named N
+void print()
+{
+    std::cout << N << '\n'; // use value of N here
+}
+
+int main()
+{
+    print<5>(); // 5 is our non-type template argument
+
+    return 0;
+}
+```
+
+## 12.1 compound types
+
+C++ supports the following compound types:
+
+    Functions
+    Arrays
+    Pointer types:
+        Pointer to object
+        Pointer to function
+    Pointer to member types:
+        Pointer to data member
+        Pointer to member function
+    Reference types:
+        L-value references
+        R-value references
+    Enumerated types:
+        Unscoped enumerations
+        Scoped enumerations
+    Class types:
+        Structs
+        Classes
+        Unions
+
+
+```cpp
+
+int x {};
+int y {x};// modifiable lvalue 
+
+
+// constexpr or const
+constexpr int d {};
+const int v {d}; // non-modifale lvalue
+
+```
+
+L value references 
+
+```cpp
+int x {5};
+int& ref {x};
+
+x = 6; // x and ref are = 6
+ref = 7; // x and ref are = 7
+
+```
+
+references have to be the same type as they are referencing.
+
+references also cant be declared they have to be inited
+
+refeernces cant change what varible they are referencing.
+
+const refs cant change value becuae that would change the value of the varible that the ref is refing.
+
+referneces and referentes have independent lifetimes
+
+there are also dangling referneces.
+
+a const L value Reference can be equal to const rvalue
+
+```cpp
+const int& ref{5};
+```
+
+Pass by reference can only accept modifiable lvalue arguments.
+
+unless the refernence is const
+
+Best practice
+
+Favor passing by const reference over passing by non-const reference unless you have a specific reason to do otherwise (e.g. the function needs to change the value of an argument).
+
+```cpp
+
+void sup(const int& x)
+
+sup(5); //ok because sup has const refernece
+int y{10}
+sup(y); //ok will work anyway if x is const or not
+```
+
+use std::stringview as a function pramater instead of std::string&
