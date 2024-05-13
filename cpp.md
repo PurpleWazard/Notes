@@ -1152,3 +1152,150 @@ sup(y); //ok will work anyway if x is const or not
 ```
 
 use std::stringview as a function pramater instead of std::string&
+
+
+
+---
+
+POINTERS yay!
+
+what are pointers
+
+ - they are like references
+ - they are more flexable than references
+ - they inherintly dangerous
+ - unlike references they are an object
+
+pointers hold the memory address of another varible
+
+to get the address of any varible put & in frount of it
+
+```cpp
+std::cout << &x;
+```
+
+references and pointers use & * syntax
+
+```cpp
+int& x; // this is a reference
+int* y; // this is a pointer
+```
+
+the dereference operator * is used to get the vaulue at an adress 
+
+```cpp
+// this works
+int x{5};
+std::cout << *(&x);
+```
+
+pointer example
+
+```cpp
+int x{60};
+int* ptr {&x};
+
+std::cout << ptr; // prints the address of x
+std::cout << *ptr; // prints the value of x
+```
+change the value of a varible through a pointer
+
+```cpp
+int x{60};
+int* ptr {&x};
+
+std::cout << x; // prints the value of x (60)
+*ptr = 30;
+std::cout << x; // prints the value of x (30)
+std::cout << *ptr; // prints the value of *ptr (30)
+```
+
+change where a pointer is pointing
+```cpp
+int x{8};
+int y{4};
+
+int* ptr {&x};
+
+std::cout << *ptr; // prints 8
+
+ptr = &y;
+
+std::cout << *ptr; // prints 4
+```
+
+all pointers are the same size on memeory depending on the archatucher like 64bit they are 8 byte long on 32bit they are 4byts
+
+dangerling pointers can lead to undefined behavior becuase they are pointing to a memeory adress thats not valid and could result in undefined behavior
+
+Null pointers
+
+```cpp
+int* x {};
+int* x {nullptr}; 
+int* x {0}; // this should be used 
+int* x {NULL}; // shouldnt be used its from C <cstddef>
+
+// dont deref null pointes otherwise program will crash
+ 
+std::cout << *x; // this would crash because x is null pointer
+```
+
+
+pointers can be const too. they are called pointer to a const value. 
+
+```cpp
+const int x {5};
+
+int* y {&x}; // this wont compile because you will be to chage the value of the varilbe even tho its const
+```
+
+the correct way
+
+```cpp
+const int x {5};
+
+const int* y {&x}; // this  is ok you just cant change the value
+
+y = &other; // this is also ok because you only changing where the pointer is pointing not the value of varibles.
+
+```
+
+you can also have a pointer point to a non-const varible  
+```cpp
+int x;
+const int* ptr {&x};
+```
+
+you only wont be able to change the value of the varible pointing to.
+
+---
+ok so here is something confusing a const pointer
+
+its just a pointer that the place its looking at cant change.
+
+you cant init an empty const pointer
+
+```cpp
+int j {10};
+
+int * const ptr {&j}
+
+// but you can still change the value of it
+
+*ptr = 20;
+```
+
+now for the finaly pointer i think 
+
+its a pointer that you cant change the address of or the value of is varible
+
+```cpp
+const int * const ptr {&x};
+```
+thats a lot of consts
+
+---
+
+
+
