@@ -158,3 +158,10 @@ stop_threshold = 90
 ```
 
 since i have a thinkpad t480 auto-cpufreq supports battery charge thresholds (i added that feature)
+
+lastly i also use thermald 
+
+```
+sudo pacman -S thermald
+systemctl enable --now thermald
+```
